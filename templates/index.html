@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Ubuntu Cloud Archive Version Tracker</title>
+  </head>
+  <body link="#000000" vlink="#000000">
+    <center>
+{% if base_releases %}
+      <p>
+        <h2 style="color:#000000;">Ubuntu Cloud Archive Base Reports</h2>
+{% for release in base_releases %}
+        <ul>
+            <a href="http://{{ public_ip }}/{{ release }}_versions.html" style='font-size:1.2em'>
+                {{ release }}
+            </a>
+        </ul>
+{% endfor %}
+      </p>
+{% endif %}
+{% if upstream_releases %}
+      <p>
+        <h2 style="color:#000000;">Ubuntu Cloud Archive Upstream Reports</h2>
+{% for release in upstream_releases %}
+        <ul>
+            <a href="http://{{ public_ip }}/{{ release }}_upstream_versions.html" style='font-size:1.2em'>
+                {{ release }}
+            </a>
+        </ul>
+{% endfor %}
+      </p>
+{% endif %}
+    </center>
+  </body>
+</html>

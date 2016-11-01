@@ -1,0 +1,55 @@
+#!/bin/bash
+#
+# Daemon for publishing Ubuntu Cloud Archive reports.
+#
+
+set -ex
+
+log () {
+    echo "$(date) $1" >> /var/log/uca-tracker/tracker.log
+}
+
+gather_versions () {
+    if [ "$1" == "upstream" ]
+    then
+        ${2}/gather-versions.py --output_dir="${2}/data-dir" ${3} --upstream
+    else
+        ${2}/gather-versions.py --output_dir="${2}/data-dir" ${3}
+    fi
+}
+
+generate_report () {
+    if [ "$1" == "upstream" ]
+    then
+       ${2}/ca-versions.py --json_dir="${2}/data-dir" --os_release=${3} --upstream
+    else
+       ${2}/ca-versions.py --json_dir="${2}/data-dir" --os_release=${3}
+    fi
+}
+
+publish () {
+    cp $1 /usr/share/nginx/www/$2
+}
+
+vt='/opt/ubuntu-reports/server/cloud-archive/version-tracker'
+while true; do
+{% if base_releases %}
+{% for release in base_releases %}
+    log "Running base version-tracker for {{ release }}"
+    gather_versions base $vt {{ release }}
+    generate_report base $vt {{ release }}
+    publish ca_versions_{{ release }}.html {{ release }}_versions.html
+    log "Published http://{{ public_ip }}/{{ release }}_versions.html"
+{% endfor %}
+{% endif %}
+
+{% if upstream_releases %}
+{% for release in upstream_releases %}
+    log "Running upstream version-tracker for {{ release }}"
+    gather_versions upstream $vt {{ release }}
+    generate_report upstream $vt {{ release }}
+    publish ca_upstream_versions_{{ release }}.html {{ release }}_upstream_versions.html
+    log "Published http://{{ public_ip }}/{{ release }}_upstream_versions.html"
+{% endfor %}
+{% endif %}
+done

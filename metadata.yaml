@@ -1,0 +1,14 @@
+name: uca-tracker
+summary: Version tracker for the Ubuntu Cloud Archive.
+maintainer: Corey Bryant <corey.bryant@ubuntu.com>
+description: |
+  This charm tracks and publishes reports that compare Ubuntu Cloud Archive
+  package versions for OpenStack.  The charm generates an Nginx-based website
+  and publishes reports to it.
+tags:
+  - openstack
+series:
+  - xenial
+provides:
+  website:
+    interface: http

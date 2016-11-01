@@ -1,0 +1,21 @@
+options:
+  base-tracker-releases:
+    type: string
+    default:
+    description: |
+        The base version tracker reports package versions from Ubuntu,
+        UCA-staging, UCA-proposed, and UCA-updates for each OpenStack release
+        specified by this option.
+        .
+        If multiple OpenStack releases are to be tracked, they must be separated
+        by spaces.
+  upstream-tracker-releases:
+    type: string
+    default:
+    description: |
+        The upstream version tracker reports package versions from Ubuntu,
+        UCA-staging, UCA-proposed, UCA-updates, and the latest upstream version
+        for each OpenStack release specified by this option.
+        .
+        If multiple OpenStack releases are to be tracked, they must be separated
+        by spaces.

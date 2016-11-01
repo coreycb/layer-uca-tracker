@@ -1,0 +1,9 @@
+[Unit]
+Description=Generate Ubuntu Cloud Archive Reports
+
+[Service]
+Environment="HOME=/root"
+ExecStart=/usr/local/bin/generate-uca-reports
+
+[Install]
+WantedBy=multi-user.target
