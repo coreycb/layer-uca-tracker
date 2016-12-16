@@ -4,7 +4,6 @@ from charmhelpers.core.hookenv import (
     config,
     open_port,
     status_set,
-    unit_public_ip,
 )
 
 from charmhelpers.core.host import (
@@ -50,7 +49,6 @@ template_map = {
         'group': 'root',
         'perms': 0o755,
         'context': {
-            'public_ip': unit_public_ip(),
             'base_releases': base_tracker_releases(),
             'upstream_releases': upstream_tracker_releases(),
         },
@@ -61,7 +59,6 @@ template_map = {
         'group': 'www-data',
         'perms': 0o644,
         'context': {
-            'public_ip': unit_public_ip(),
             'base_releases': base_tracker_releases(),
             'upstream_releases': upstream_tracker_releases(),
         },

@@ -11,7 +11,7 @@
         <h2 style="color:#000000;">Ubuntu Cloud Archive Base Reports</h2>
 {% for release in base_releases %}
         <ul>
-            <a href="http://{{ public_ip }}/{{ release }}_versions.html" style='font-size:1.2em'>
+            <a href="/{{ release }}_versions.html" style='font-size:1.2em'>
                 {{ release }}
             </a>
         </ul>
@@ -23,7 +23,7 @@
         <h2 style="color:#000000;">Ubuntu Cloud Archive Upstream Reports</h2>
 {% for release in upstream_releases %}
         <ul>
-            <a href="http://{{ public_ip }}/{{ release }}_upstream_versions.html" style='font-size:1.2em'>
+            <a href="/{{ release }}_upstream_versions.html" style='font-size:1.2em'>
                 {{ release }}
             </a>
         </ul>

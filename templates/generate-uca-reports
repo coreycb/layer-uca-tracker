@@ -39,7 +39,7 @@ while true; do
     gather_versions base $vt {{ release }}
     generate_report base $vt {{ release }}
     publish ca_versions_{{ release }}.html {{ release }}_versions.html
-    log "Published http://{{ public_ip }}/{{ release }}_versions.html"
+    log "Published /{{ release }}_versions.html"
 {% endfor %}
 {% endif %}
 
@@ -49,7 +49,7 @@ while true; do
     gather_versions upstream $vt {{ release }}
     generate_report upstream $vt {{ release }}
     publish ca_upstream_versions_{{ release }}.html {{ release }}_upstream_versions.html
-    log "Published http://{{ public_ip }}/{{ release }}_upstream_versions.html"
+    log "Published /{{ release }}_upstream_versions.html"
 {% endfor %}
 {% endif %}
 done
