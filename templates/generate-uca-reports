@@ -1,55 +1,65 @@
-#!/bin/bash
+#!/usr/bin/env python
 #
 # Daemon for publishing Ubuntu Cloud Archive reports.
 #
 
-set -ex
+import httplib2
+import logging
+import os
+import shutil
+import subprocess
+import sys
 
-log () {
-    echo "$(date) $1" >> /var/log/uca-tracker/tracker.log
-}
+BASE_DIR = '/opt/ubuntu-reports/server/cloud-archive/version-tracker/'
 
-gather_versions () {
-    if [ "$1" == "upstream" ]
-    then
-        ${2}/gather-versions.py --output_dir="${2}/data-dir" ${3} --upstream
-    else
-        ${2}/gather-versions.py --output_dir="${2}/data-dir" ${3}
-    fi
-}
+def gather_versions(upstream, release):
+    ga_versions = os.path.join(BASE_DIR, 'gather-versions.py')
+    data_dir = os.path.join(BASE_DIR, 'data-dir')
+    cmd = [ga_versions,
+           '--output_dir={}'.format(data_dir),
+           release,
+          ]
+    if upstream:
+        cmd.append('--upstream')
+    subprocess.check_call(cmd)
 
-generate_report () {
-    if [ "$1" == "upstream" ]
-    then
-       ${2}/ca-versions.py --json_dir="${2}/data-dir" --os_release=${3} --upstream
-    else
-       ${2}/ca-versions.py --json_dir="${2}/data-dir" --os_release=${3}
-    fi
-}
+def generate_report(upstream, release):
+    ca_versions = os.path.join(BASE_DIR, 'ca-versions.py')
+    data_dir = os.path.join(BASE_DIR, 'data-dir')
+    cmd = [ca_versions,
+           '--json_dir={}'.format(data_dir),
+           '--os_release={}'.format('pike'),
+          ]
+    if upstream:
+        cmd.append('--upstream')
+        fname = '{}_upstream_versions.html'.format(release)
+    else:
+        fname = '{}_versions.html'.format(release)
+    html_file = os.path.join('/usr/share/nginx/www/', fname)
+    cmd.append('--output={}'.format(html_file))
+    subprocess.check_call(cmd)
 
-publish () {
-    cp $1 /usr/share/nginx/www/$2
-}
-
-vt='/opt/ubuntu-reports/server/cloud-archive/version-tracker'
-while true; do
+def main():
+    logging.basicConfig(filename='/var/log/uca-tracker/tracker.log',
+                        level=logging.DEBUG)
+    while True:
 {% if base_releases %}
 {% for release in base_releases %}
-    log "Running base version-tracker for {{ release }}"
-    gather_versions base $vt {{ release }}
-    generate_report base $vt {{ release }}
-    publish ca_versions_{{ release }}.html {{ release }}_versions.html
-    log "Published /{{ release }}_versions.html"
+        logging.debug("Running base version-tracker for {{ release }}")
+        gather_versions(upstream=False, release='{{ release }}')
+        generate_report(upstream=False, release='{{ release }}')
+        logging.debug("Published {{ release }}_versions.html")
 {% endfor %}
 {% endif %}
 
 {% if upstream_releases %}
 {% for release in upstream_releases %}
-    log "Running upstream version-tracker for {{ release }}"
-    gather_versions upstream $vt {{ release }}
-    generate_report upstream $vt {{ release }}
-    publish ca_upstream_versions_{{ release }}.html {{ release }}_upstream_versions.html
-    log "Published /{{ release }}_upstream_versions.html"
+        logging.debug("Running upstream version-tracker for {{ release }}")
+        gather_versions(upstream=True, release='{{ release }}')
+        generate_report(upstream=True, release='{{ release }}')
+        logging.debug("Published {{ release }}_upstream_versions.html")
 {% endfor %}
 {% endif %}
-done
+
+if __name__ == "__main__":
+    main()
