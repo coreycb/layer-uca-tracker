@@ -41,6 +41,8 @@ def generate_report(upstream, release):
 
 def main():
     logging.basicConfig(filename='/var/log/uca-tracker/tracker.log',
+                        format='%(asctime)s %(levelname)s %(message)s',
+                        datefmt='%Y-%m-%d %H:%M',
                         level=logging.DEBUG)
     while True:
 {% if base_releases %}
