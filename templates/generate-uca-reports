@@ -28,7 +28,7 @@ def generate_report(upstream, release):
     data_dir = os.path.join(BASE_DIR, 'data-dir')
     cmd = [ca_versions,
            '--json_dir={}'.format(data_dir),
-           '--os_release={}'.format('pike'),
+           '--os_release={}'.format(release),
           ]
     if upstream:
         cmd.append('--upstream')
