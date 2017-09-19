@@ -21,7 +21,11 @@ def gather_versions(upstream, release):
           ]
     if upstream:
         cmd.append('--upstream')
-    subprocess.check_call(cmd)
+    try:
+        subprocess.check_call(cmd)
+        return 0
+    except subprocess.CalledProcessError:
+        return -1
 
 def generate_report(upstream, release):
     ca_versions = os.path.join(BASE_DIR, 'ca-versions.py')
@@ -37,7 +41,11 @@ def generate_report(upstream, release):
         fname = '{}_versions.html'.format(release)
     html_file = os.path.join('/usr/share/nginx/www/', fname)
     cmd.append('--output={}'.format(html_file))
-    subprocess.check_call(cmd)
+    try:
+        subprocess.check_call(cmd)
+        return 0
+    except subprocess.CalledProcessError:
+        return -1
 
 def main():
     logging.basicConfig(filename='/var/log/uca-tracker/tracker.log',
@@ -48,8 +56,10 @@ def main():
 {% if base_releases %}
 {% for release in base_releases %}
         logging.debug("Running base version-tracker for {{ release }}")
-        gather_versions(upstream=False, release='{{ release }}')
-        generate_report(upstream=False, release='{{ release }}')
+        if not gather_versions(upstream=False, release='{{ release }}'):
+            logging.debug("Failure gathering versions for {{ release }}")
+        if not generate_report(upstream=False, release='{{ release }}'):
+            logging.debug("Failure generating report for {{ release }}")
         logging.debug("Published {{ release }}_versions.html")
 {% endfor %}
 {% endif %}
@@ -57,8 +67,10 @@ def main():
 {% if upstream_releases %}
 {% for release in upstream_releases %}
         logging.debug("Running upstream version-tracker for {{ release }}")
-        gather_versions(upstream=True, release='{{ release }}')
-        generate_report(upstream=True, release='{{ release }}')
+        if not gather_versions(upstream=True, release='{{ release }}'):
+            logging.debug("Failure gathering versions for {{ release }}")
+        if not generate_report(upstream=True, release='{{ release }}'):
+            logging.debug("Failure generating report for {{ release }}")
         logging.debug("Published {{ release }}_upstream_versions.html")
 {% endfor %}
 {% endif %}
