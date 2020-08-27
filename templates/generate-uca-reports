@@ -56,9 +56,9 @@ def main():
 {% if base_releases %}
 {% for release in base_releases %}
         logging.debug("Running base version-tracker for {{ release }}")
-        if not gather_versions(upstream=False, release='{{ release }}'):
+        if gather_versions(upstream=False, release='{{ release }}'):
             logging.debug("Failure gathering versions for {{ release }}")
-        if not generate_report(upstream=False, release='{{ release }}'):
+        if generate_report(upstream=False, release='{{ release }}'):
             logging.debug("Failure generating report for {{ release }}")
         logging.debug("Published {{ release }}_versions.html")
 {% endfor %}
@@ -67,9 +67,9 @@ def main():
 {% if upstream_releases %}
 {% for release in upstream_releases %}
         logging.debug("Running upstream version-tracker for {{ release }}")
-        if not gather_versions(upstream=True, release='{{ release }}'):
+        if gather_versions(upstream=True, release='{{ release }}'):
             logging.debug("Failure gathering versions for {{ release }}")
-        if not generate_report(upstream=True, release='{{ release }}'):
+        if generate_report(upstream=True, release='{{ release }}'):
             logging.debug("Failure generating report for {{ release }}")
         logging.debug("Published {{ release }}_upstream_versions.html")
 {% endfor %}
