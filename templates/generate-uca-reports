@@ -47,6 +47,26 @@ def generate_report(upstream, release):
     except subprocess.CalledProcessError:
         return -1
 
+def publish_swift():
+    env = {}
+    with open('/home/ubuntu/openrc', 'r') as f:
+        for line in f.readlines():
+            line = line.replace('export ', '')
+            line = line.replace('"', '')
+            line = line.rstrip()
+            var = line.split('=')[0]
+            val = line.split('=')[1]
+            env[var] = val
+    cmds = [['swift', 'upload', 'reports', '-c',
+            '--object-name', 'cloud-archive', '/usr/share/nginx/www'],
+            ['swift', 'post', '--read-acl', '".r:*,.rlistings"', 'reports']]
+    for cmd in cmds:
+        try:
+            subprocess.check_call(cmd, env=env)
+        except subprocess.CalledProcessError as e:
+            return -1
+    return 0
+
 def main():
     logging.basicConfig(filename='/var/log/uca-tracker/tracker.log',
                         format='%(asctime)s %(levelname)s %(message)s',
@@ -74,6 +94,11 @@ def main():
         logging.debug("Published {{ release }}_upstream_versions.html")
 {% endfor %}
 {% endif %}
+
+        if os.path.isfile('/home/ubuntu/openrc'):
+            logging.debug("Publishing to swift")
+            if publish_swift():
+                logging.debug("Failure publishing to swift")
 
 if __name__ == "__main__":
     main()
