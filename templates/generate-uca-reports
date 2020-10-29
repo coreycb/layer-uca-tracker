@@ -57,9 +57,10 @@ def publish_swift():
             var = line.split('=')[0]
             val = line.split('=')[1]
             env[var] = val
-    cmds = [['swift', 'upload', 'reports', '-c',
-            '--object-name', 'cloud-archive', '/usr/share/nginx/www'],
-            ['swift', 'post', '--read-acl', '".r:*,.rlistings"', 'reports']]
+    cmds = [['swift', 'upload', 'reports',
+             '-c', '--object-name', 'cloud-archive', '/usr/share/nginx/www'],
+            ['swift', 'post', '--read-acl',
+             '.r:*,.rlistings', 'reports']]
     for cmd in cmds:
         try:
             subprocess.check_call(cmd, env=env)
