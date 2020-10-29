@@ -76,7 +76,7 @@ template_map = {
 @when_not('uca-tracker.installed')
 def install_uca_tracker():
     apt_install(['python3-git', 'python3-yaml', 'python3-httplib2',
-                 'python3-launchpadlib'], fatal=True)
+                 'python3-launchpadlib', 'python3-swift'], fatal=True)
 
     install_remote('lp:ubuntu-reports', dest='/opt')
 
