@@ -5,7 +5,7 @@ Description=Generate Ubuntu Cloud Archive Reports
 Environment="HOME=/root"
 ExecStart=/usr/local/bin/generate-uca-reports
 Restart=always
-RuntimeMaxSec=86400
+RuntimeMaxSec=43200
 
 [Install]
 WantedBy=multi-user.target
