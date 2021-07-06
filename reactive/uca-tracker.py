@@ -9,9 +9,8 @@ from charmhelpers.core.hookenv import (
 from charmhelpers.core.host import (
     chownr,
     service_restart,
+    service_resume,
 )
-
-import charmhelpers.core.host as ch_host
 
 from charmhelpers.core.templating import render
 
@@ -112,7 +111,7 @@ def setup_vhost():
         app_path='/usr/share/nginx/www',
     )
 
-    ch_host.service_restart('nginx')
+    service_restart('nginx')
     set_state('uca-tracker.nginx.ready')
 
 
@@ -121,6 +120,8 @@ def setup_vhost():
 def tracker_ready():
     open_port(80)
 
+    # call service_resume to ensure service is enabled to start at boot
+    service_resume('uca-tracker')
     service_restart('uca-tracker')
     status_set('active', 'ready')
     set_state('uca-tracker.ready')
